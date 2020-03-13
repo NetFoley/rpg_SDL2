@@ -31,14 +31,14 @@ int sprite_getWidth(sprite spr);
 int sprite_getHeight(sprite spr);
 int sprite_animationEnded(sprite spr);
 
-void sprite_INI(sprite * leSprite, char cAnim[50], int offsetX, int offsetY, int tailleX, int scale, SDL_Renderer * renderer)
+void sprite_INI(sprite * leSprite, char Anim[50], int offsetX, int offsetY, int tailleX, int scale, SDL_Renderer * renderer)
 {
-    strcpy(leSprite->cAnim, cAnim);
-    printf("Initialisation sprite : %s\n", leSprite->cAnim);
+    strcpy(leSprite->cAnim, Anim);
+    //printf("Initialisation sprite : %s\n", leSprite->cAnim);
 
     leSprite->frame = 0;
     leSprite->tickBetweenFrames = 80;
-    leSprite->timeSinceLastFrame = 0;
+    leSprite->timeSinceLastFrame = SDL_GetTicks();
     leSprite->scale = 3 * scale;
     leSprite->alive = 1;
     leSprite->flip = SDL_FLIP_NONE;
@@ -94,6 +94,7 @@ void sprite_DRAW(sprite * leSprite, SDL_Renderer * renderer, int X, int Y)
 
     SDL_RenderCopyEx(renderer, leSprite->texture, &leSprite->imgSize, &leSprite->imgPos, 0, NULL, leSprite->flip);
 }
+
 void sprite_FDRAW(sprite * leSprite, SDL_Renderer * renderer, int X, int Y)
 {
     leSprite->imgPos.x = X + leSprite->offsetX - leSprite->imgPos.w/2;

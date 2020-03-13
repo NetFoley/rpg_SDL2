@@ -23,5 +23,6 @@ File *initialiser();
 void enfiler(File *file, pos2D nvNombre);
 pos2D defiler(File *file);
 void afficherFile(File *file);
+void viderFile(File * file);
 
 #endif // PILE_H_INCLUDED

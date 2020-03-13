@@ -4,7 +4,6 @@
 
 int main(int argc, char *argv[])
 {
-
     SDL_Window * window;
     SDL_Renderer * renderer;
     SDL_Event event;
@@ -26,17 +25,12 @@ int main(int argc, char *argv[])
         return 3;
     }
 
-    layer_INI(&Layer1, renderer);
-    layer_AddSoldier(&Layer1, renderer);
-    layer_AddSoldier(&Layer1, renderer);
-    layer_AddSoldier(&Layer1, renderer);
-    layer_AddSquelette(&Layer1, renderer);
-    layer_AddSquelette(&Layer1, renderer);
-    layer_AddSquelette(&Layer1, renderer);
-    layer_AddSquelette(&Layer1, renderer);
     char sMap[50];
     strcpy(sMap, "map1.map");
+    layer_INI(&Layer1, renderer);
     layer_readMap(&Layer1, sMap, renderer);
+    printf("Chargement de la carte %s\n", sMap);
+    printf("Creation du layer : \nid du joueur:%i\nNombre de perso : %i\nNombre d'objects : %i\n", Layer1.idPlayer,Layer1.nbPerso, Layer1.nbObject);
 
     while (1) {
 
@@ -61,7 +55,7 @@ int main(int argc, char *argv[])
     }
 
     printf("\nFin du programme\n");
-    printf("\nPersonnage : \nPV : %i \nx : %f\ny : %f\nNombre de perso : %i\nNombre d'objects : %i", Layer1.persos[0].gameObject.life, Layer1.persos[0].gameObject.X, Layer1.persos[0].gameObject.Y, Layer1.nbPerso, Layer1.nbObject);
+    printf("\nPersonnage : \nPV : %i \nx : %f\ny : %f\nNombre de perso : %i\nNombre d'objects : %i", Layer1.player->gameObject.life, Layer1.player->gameObject.X, Layer1.player->gameObject.Y, Layer1.nbPerso, Layer1.nbObject);
     layer_Destroy(&Layer1);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

@@ -57,7 +57,6 @@ void gameObject_INI(gameObject * obj, int maxLife, float X , float Y, float maxV
 {
     obj->X = X;
     obj->Y = Y;
-    printf("Coordonnes %f %f\n", X ,Y);
     obj->maxV = maxV;
     obj->vX = 0;
     obj->vY = 0;
@@ -70,32 +69,42 @@ void gameObject_INI(gameObject * obj, int maxLife, float X , float Y, float maxV
     obj->boxColliderOffset.x = 0;
     obj->boxColliderOffset.y = 0;
     obj->id = attribuerID();
+    //printf("Coordonnes %f %f\nID %i\n", X ,Y, obj->id);
 }
 
 
 void gameObject_simulate(gameObject * o, gameObject * target, File * path)
 {
-    if(target != NULL)
-    {
+    //if(target != NULL)
+    if(target == NULL)
+        viderFile(path);
+
         if(o->movable == 1)
         {
             gameObject_getBoxCollider(o);
+            if(target != NULL)
+                gameObject_getBoxCollider(target);
             /**********************
             WITH PATHFINDING
             **********************/
             if(path->premier != NULL)
+            {
                 if( path->premier->nombre.x == (int)(o->boxCollider.x+TILESIZE/2)/TILESIZE &&
                     path->premier->nombre.y == (int)(o->boxCollider.y+TILESIZE/2)/TILESIZE)
                 {
-                    printf("ARRIVER EN CASE %i %i\n", path->premier->nombre.x, path->premier->nombre.y);
                     defiler(path);
+
+                    /*
+                    printf("ARRIVER EN CASE %i %i\n", path->premier->nombre.x, path->premier->nombre.y);
                     if(path->premier != NULL)
                         printf("Recherche de la case suivante... %i %i\n", path->premier->nombre.x, path->premier->nombre.y);
                     else
                         printf("Aucune case suivante\n");
                     afficherFile(path);
+                    */
                 }
-            if(path->premier == NULL)
+            }
+            if(path->premier == NULL && target != NULL)
             {
                 char sMap[50];
                 strcpy(sMap, "map1.map");
@@ -106,40 +115,44 @@ void gameObject_simulate(gameObject * o, gameObject * target, File * path)
                 (int)(o->boxCollider.y+TILESIZE/2)/TILESIZE,
                 path);
             }
+        }
             //printf("ACC :%i %i\n", ticks, o->timeSinceLastMove);
             // printf("POSITION X%f TARGET X%i\nPOSITION Y%f TARGET Y%i\n", ((float)o->boxCollider.x)/TILESIZE, path->premier->nombre.x,
                    // ((float)o->boxCollider.y)/TILESIZE , path->premier->nombre.y);
             // printf("POSITION X%f TARGET X%i\nPOSITION Y%f TARGET Y%i\n", (o->X)/TILESIZE, path->premier->nombre.x,
                    // (o->Y)/TILESIZE , path->premier->nombre.y);
             // printf("Position (id %i) X : %f Y : %f\n", o->id, o->X/TILESIZE, o->Y/TILESIZE);
-            if ((float)(o->boxCollider.x)/TILESIZE == path->premier->nombre.x)
+            if(path->premier != NULL)
             {
-                gameObject_slow(&o->vX, o->a);
-            }
-            else if((float)(o->boxCollider.x)/TILESIZE < path->premier->nombre.x)
-            {
-                //printf("ACC :%f %f\n", o->vX, o->a);
-                addVX(o,o->a);
-            }
-            else
-            {
-                // printf("-ACC :%f %f\n", o->vX, o->a);
-                addVX(o,-o->a);
-            }
+                if ((float)(o->boxCollider.x)/TILESIZE == path->premier->nombre.x)
+                {
+                    gameObject_slow(&o->vX, o->a);
+                }
+                else if((float)(o->boxCollider.x)/TILESIZE < path->premier->nombre.x)
+                {
+                    //printf("ACC :%f %f\n", o->vX, o->a);
+                    addVX(o,o->a);
+                }
+                else
+                {
+                    // printf("-ACC :%f %f\n", o->vX, o->a);
+                    addVX(o,-o->a);
+                }
 
-            if ((float)(o->boxCollider.y)/TILESIZE == path->premier->nombre.y)
-            {
-                gameObject_slow(&o->vY, o->a);
-            }
-            else if((float)(o->boxCollider.y)/TILESIZE < path->premier->nombre.y)
-            {
-                // printf("ACC :%f %f\n", o->vY, o->a);
-                addVY(o,o->a);
-            }
-            else
-            {
-                // printf("-ACC :%f %f\n", o->vY, o->a);
-                addVY(o,-o->a);
+                if ((float)(o->boxCollider.y)/TILESIZE == path->premier->nombre.y)
+                {
+                    gameObject_slow(&o->vY, o->a);
+                }
+                else if((float)(o->boxCollider.y)/TILESIZE < path->premier->nombre.y)
+                {
+                    // printf("ACC :%f %f\n", o->vY, o->a);
+                    addVY(o,o->a);
+                }
+                else
+                {
+                    // printf("-ACC :%f %f\n", o->vY, o->a);
+                    addVY(o,-o->a);
+                }
             }
             /***********************
             WITHOUT PATHFINDING
@@ -175,14 +188,13 @@ void gameObject_simulate(gameObject * o, gameObject * target, File * path)
                 // printf("-ACC :%f %f\n", o->vY, o->a);
                 addVY(o,-o->a);
             }*/
-        }
         else
         {
             // printf("TARGET OF %i IS NULL\n", o->id);
         }
 
 
-    }
+
 }
 
 void gameObject_move(gameObject * o)
@@ -441,8 +453,8 @@ SDL_Rect * gameObject_getBoxCollider(gameObject * obj)
 {
     obj->boxCollider.x = obj->X + obj->boxColliderOffset.x;
     obj->boxCollider.y = obj->Y + obj->boxColliderOffset.y;
-    obj->hitBox.x = obj->X;
-    obj->hitBox.y = obj->Y;
+    obj->hitBox.x = obj->boxCollider.x;
+    obj->hitBox.y = obj->boxCollider.y;
 
     return &obj->boxCollider;
 }
@@ -451,15 +463,16 @@ SDL_Rect * gameObject_getHitBox(gameObject * obj)
 {
     obj->boxCollider.x = obj->X + obj->boxColliderOffset.x;
     obj->boxCollider.y = obj->Y + obj->boxColliderOffset.y;
-    obj->hitBox.x = obj->X;
-    obj->hitBox.y = obj->Y;
+    obj->hitBox.x = obj->boxCollider.x;
+    obj->hitBox.y = obj->boxCollider.y;
 
     return &obj->hitBox;
 }
 
 int attribuerID()
 {
-    static int compteur = 0;
+    static int compteur = -1;
+    //printf("Compteur = %i\n", compteur);
     compteur++;
     return compteur;
 }

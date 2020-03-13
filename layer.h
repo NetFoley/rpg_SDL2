@@ -11,52 +11,59 @@
 #define PI 3.14159265
 
 typedef struct layer{
+    int offsetX;
+    int offsetY;
 	perso * persos;
 	object * objects;
+	perso * player;
     int timeSinceLastAction;
     int timeBetweenAction;
 	int nbPerso;
 	int nbObject;
+	int idPlayer;
 }layer;
 
 void layer_INI(layer * leLayer, SDL_Renderer * renderer);
 void layer_DRAW(layer * leLayer, SDL_Renderer * renderer, SDL_Window * window);
-void layer_AddSquelette(layer * leLayer, SDL_Renderer * renderer);
+void layer_AddSoldier(layer * leLayer, SDL_Renderer * renderer, int x, int y);
+void layer_AddSquelette(layer * leLayer, SDL_Renderer * renderer, int x, int y);
 void layer_AddCoffre(layer * leLayer, SDL_Renderer * renderer, int x, int y);
 void layer_AddGrosCoffre(layer * leLayer, SDL_Renderer * renderer);
 void layer_getInput(layer * l, SDL_Event event);
 void layer_Destroy();
 void layer_readMap(layer * l, char sMap[50], SDL_Renderer * renderer);
+void layer_setPlayer(layer * lay, perso * p);
+perso * layer_getPersoById(layer * lay, int id);
 
 void layer_INI(layer * leLayer, SDL_Renderer * renderer)
 {
-    leLayer->persos =(perso*)malloc(2000*sizeof(perso));
-    leLayer->objects =(object*)malloc(2000*sizeof(object));
+    leLayer->offsetX = 0;
+    leLayer->offsetY = 0;
+    leLayer->persos =(perso*)malloc(2*sizeof(perso));
+    leLayer->objects =(object*)malloc(2*sizeof(object));
 	leLayer->nbPerso = 0;
 	leLayer->nbObject = 0;
-	leLayer->timeSinceLastAction = 0;
+	leLayer->timeSinceLastAction = SDL_GetTicks();
 	leLayer->timeBetweenAction = 30;
+	leLayer->idPlayer = 0;
+	leLayer->player = NULL;
 }
 
-void layer_AddSquelette(layer * leLayer, SDL_Renderer * renderer)
+void layer_AddSquelette(layer * leLayer, SDL_Renderer * renderer, int x, int y)
 {
     leLayer->persos =(perso*)realloc(leLayer->persos, (leLayer->nbPerso+2)*(sizeof(perso)));
-    perso_INI(&leLayer->persos[leLayer->nbPerso], renderer, 0);
-    if (leLayer->nbPerso == 0)
-        perso_setPlayer(&leLayer->persos[leLayer->nbPerso]);
+    perso_INI(&leLayer->persos[leLayer->nbPerso], renderer, 0, x, y);
     leLayer->nbPerso++;
-    printf("%i loaded perso\n\n", leLayer->nbPerso);
+    //printf("%i loaded perso\n\n", leLayer->nbPerso);
 }
 
-void layer_AddSoldier(layer * leLayer, SDL_Renderer * renderer)
+void layer_AddSoldier(layer * leLayer, SDL_Renderer * renderer, int x, int y)
 {
 
     leLayer->persos =(perso*)realloc(leLayer->persos, (leLayer->nbPerso+2)*(sizeof(perso)));
-    perso_INI(&leLayer->persos[leLayer->nbPerso], renderer, 1);
-    if (leLayer->nbPerso == 0)
-        perso_setPlayer(&leLayer->persos[leLayer->nbPerso]);
+    perso_INI(&leLayer->persos[leLayer->nbPerso], renderer, 1, x, y);
     leLayer->nbPerso++;
-    printf("%i loaded perso\n\n", leLayer->nbPerso);
+    //printf("%i loaded perso\n\n", leLayer->nbPerso);
 }
 
 void layer_AddCoffre(layer * leLayer, SDL_Renderer * renderer, int x, int y)
@@ -65,7 +72,7 @@ void layer_AddCoffre(layer * leLayer, SDL_Renderer * renderer, int x, int y)
     leLayer->objects =(object*)realloc(leLayer->objects, (leLayer->nbObject+2)*(sizeof(object)));
     object_INI(&leLayer->objects[leLayer->nbObject], renderer, 0, x ,y);
     leLayer->nbObject++;
-    printf("%i loaded objects\n\n", leLayer->nbObject);
+    //printf("%i loaded objects\n\n", leLayer->nbObject);
 }
 
 /*void layer_AddGrosCoffre(layer * leLayer, SDL_Renderer * renderer)
@@ -93,6 +100,17 @@ void layer_readMap(layer * l, char sMap[50], SDL_Renderer * renderer)
             case 'c' :
                 layer_AddCoffre(l, renderer, i*TILESIZE, j*TILESIZE);
                 break;
+            case 'P' :
+                layer_AddSoldier(l, renderer, i*TILESIZE, j*TILESIZE);
+                layer_setPlayer(l, &l->persos[l->nbPerso-1]);
+                printf("Joueur id : %i\n", l->persos[l->nbPerso-1].gameObject.id);
+                break;
+            case '1' :
+                layer_AddSoldier(l, renderer, i*TILESIZE, j*TILESIZE);
+                break;
+            case '2' :
+                layer_AddSquelette(l, renderer, i*TILESIZE, j*TILESIZE);
+                break;
             case '\n' :
                 j++;
                 i = -1;
@@ -102,6 +120,26 @@ void layer_readMap(layer * l, char sMap[50], SDL_Renderer * renderer)
         }
         fclose(pFile);
     }
+
+}
+
+void layer_setPlayer(layer * lay, perso * p)
+{
+    lay->idPlayer = p->gameObject.id;
+    p->playerControled = SDL_TRUE;
+}
+
+perso * layer_getPersoById(layer * lay, int id)
+{
+    int persoId = 0;
+    for(int i = 0; i < lay->nbPerso; i++)
+    {
+        if(lay->persos[i].gameObject.id == id)
+        {
+            persoId = i;
+        }
+    }
+    return &lay->persos[persoId];
 }
 
 void layer_getInput(layer * l, SDL_Event event)
@@ -109,15 +147,49 @@ void layer_getInput(layer * l, SDL_Event event)
 GESTION DES ENTREES CLAVIER
 ***************************************/
 {
-    if(l->persos[0].gameObject.life > 0 )
+    if(l->player == NULL)
+    {
+        l->player = layer_getPersoById(l, l->idPlayer);
+    }
+    if(l->player->gameObject.id != l->idPlayer)
+    {
+        l->player = layer_getPersoById(l, l->idPlayer);
+    }
+
+    if(l->player->gameObject.life > 0 )
     {
         /*
         if (event.button.button == SDL_BUTTON_LEFT && event.button.state == SDL_PRESSED) {
             moveToMouse(&l->persos[0].gameObject);
             gameObject_addLife(&l->persos[0].gameObject,10);
         }*/
+        static SDL_bool pressed = SDL_FALSE;
+        if(event.button.button == SDL_BUTTON_LEFT && event.button.state == SDL_PRESSED && pressed == SDL_FALSE)
+        {
+            pressed = SDL_TRUE;
+            SDL_Point mousePos;
+            SDL_GetMouseState(&mousePos.x, &mousePos.y);
+
+            mousePos.x -= l->offsetX - TILESIZE/2;
+            mousePos.y -= l->offsetY - TILESIZE;
+
+            printf("Mouse pos x %i y %i\n",mousePos.x, mousePos.y);
+            for(int i = 0; i < l->nbPerso; i++)
+            {
+
+                if(SDL_PointInRect(&mousePos, gameObject_getBoxCollider(&l->persos[i].gameObject)))
+                {
+                    printf("CLICK ON OBJECT %i \n", i);
+                }
+            }
+        }
+        else if(event.button.button == SDL_BUTTON_LEFT && event.button.state == SDL_RELEASED)
+        {
+            pressed = SDL_FALSE;
+        }
+
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_f) {
-            perso_setAttack(&l->persos[0]);
+            perso_setAttack(l->player);
         }
 
             static SDL_bool Z=0,Q=0,S=0,D=0;
@@ -167,29 +239,29 @@ GESTION DES ENTREES CLAVIER
 
             }
 
-            if(Z && l->persos[0].attacking != 1)
+            if(Z && l->player->attacking != 1)
             {
-                perso_moveUp(&l->persos[0]);
+                perso_moveUp(l->player);
             }
-            else if(S && l->persos[0].attacking != 1)
+            else if(S && l->player->attacking != 1)
             {
-                perso_moveDown(&l->persos[0]);
-            }
-            else
-            {
-                perso_slowY(&l->persos[0]);
-            }
-            if(Q && l->persos[0].attacking != 1)
-            {
-                perso_moveLeft(&l->persos[0]);
-            }
-            else if(D && l->persos[0].attacking != 1)
-            {
-                perso_moveRight(&l->persos[0]);
+                perso_moveDown(l->player);
             }
             else
             {
-                perso_slowX(&l->persos[0]);
+                perso_slowY(l->player);
+            }
+            if(Q && l->player->attacking != 1)
+            {
+                perso_moveLeft(l->player);
+            }
+            else if(D && l->player->attacking != 1)
+            {
+                perso_moveRight(l->player);
+            }
+            else
+            {
+                perso_slowX(l->player);
             }
 
 
@@ -209,9 +281,9 @@ void layer_DRAW(layer * leLayer, SDL_Renderer * renderer, SDL_Window * window)
     ***********************************/
     int x,y;
     SDL_GetWindowSize(window, &x, &y);
-    int offsetX = 0, offsetY = 0;
-    offsetX = x/2 - leLayer->persos[0].gameObject.X;
-    offsetY = y/2 - leLayer->persos[0].gameObject.Y;
+
+    leLayer->offsetX = x/2 - gameObject_getHitBox(&leLayer->player->gameObject)->x + gameObject_getHitBox(&leLayer->player->gameObject)->w/2;
+    leLayer->offsetY = y/2 - gameObject_getHitBox(&leLayer->player->gameObject)->y + gameObject_getHitBox(&leLayer->player->gameObject)->h/2;
 
     //Trier par Y croissant
     int temp;
@@ -252,12 +324,12 @@ void layer_DRAW(layer * leLayer, SDL_Renderer * renderer, SDL_Window * window)
 
     for( int i = 0; i < leLayer->nbObject; i++)
     {
-        object_DRAW(&leLayer->objects[i], renderer, offsetX, offsetY);
+        object_DRAW(&leLayer->objects[i], renderer, leLayer->offsetX, leLayer->offsetY);
     }
     //Afficher les entités
     for( int i = 0; i < leLayer->nbPerso; i++)
     {
-        perso_DRAW(&leLayer->persos[nOrderPerso[i]], renderer, offsetX, offsetY);
+        perso_DRAW(&leLayer->persos[nOrderPerso[i]], renderer, leLayer->offsetX, leLayer->offsetY);
     }
 
     free(nOrderPerso);

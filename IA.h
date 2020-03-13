@@ -161,7 +161,9 @@ int map_getPath(char sMap[50], int xS, int yS, int xE, int yE, File * path)
         //printf("s x %i y %i e x %i y %i %c\n", xS, yS, xE, yE, cPathMap->cDirMap[nvPos.y][nvPos.x]);
 
     }while((path->premier->nombre.x != xS || path->premier->nombre.y != yS) && stop == SDL_FALSE);
+    defiler(path);
     //defiler(path);
+    return 0;
 }
 
 int getMapHeight(char sMap[50])
@@ -302,15 +304,15 @@ void map_readMap(char sMap[50], pathMap * pm)
     pFile = fopen(sMap, "r");
     if (pFile != NULL)
     {
-        char a='a';
+        char a='#';
         int i = 0, j = 0;
         while(a != EOF)
         {
             a = fgetc(pFile);
             switch (a)
             {
-            case '.' :
-                setPathMap(pm, i, j, '.');
+            case 'c' :
+                setPathMap(pm, i, j, '#');
                 break;
             case '\n' :
                 setPathMap(pm, i, j, '\n');
@@ -320,7 +322,7 @@ void map_readMap(char sMap[50], pathMap * pm)
             case EOF:
                 break;
             default :
-                setPathMap(pm, i, j, '#');
+                setPathMap(pm, i, j, '.');
             }
             i++;
         }

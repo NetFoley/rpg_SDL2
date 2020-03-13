@@ -41,7 +41,7 @@ typedef struct pTarget {
     perso * p;
 }pTarget;*/
 
-void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t);
+void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, int y);
 void perso_setWalk(struct perso * lePerso);
 void perso_setAttack(struct perso * lePerso);
 void perso_setHitted(perso * p, perso * p2, int dmg);
@@ -70,7 +70,7 @@ void perso_slowX(perso * p);
 void perso_slowY(perso * p);
 int getDistanceBetween(perso * p, gameObject * o);
 
-void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t)
+void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, int y)
 {
 
     char tPersoA[50];
@@ -80,9 +80,6 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t)
     char tPersoD[50];
     char tPersoI[50];
 
-    static int i = 0;
-
-    i = i + TILESIZE*5;
     switch (t)
     {
         case 0 :
@@ -111,7 +108,7 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t)
             lePerso->raceAttitude[human] = -10;
             lePerso->attackBoxOffset.x = 60;
             lePerso->attackBoxOffset.y = sprite_getHeight(perso_getWalkSprite(lePerso))/2;
-            gameObject_INI(&lePerso->gameObject, 30, i , 300, 4, 0.35, 1, renderer);
+            gameObject_INI(&lePerso->gameObject, 30, x, y, 4, 0.8, 1, renderer);
             lePerso->attackFrame = 7;
             lePerso->range = 450;
             lePerso->damage = 15;
@@ -150,7 +147,7 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t)
             lePerso->hitRange = 90;
             lePerso->attackBoxOffset.x = 50;
             lePerso->attackBoxOffset.y = sprite_getHeight(perso_getWalkSprite(lePerso))/2;
-            gameObject_INI(&lePerso->gameObject, 60, i , 300, 6, 0.70   , 1, renderer);
+            gameObject_INI(&lePerso->gameObject, 60, x, y, 6, 1, 1, renderer);
             lePerso->attackFrame = 5;
             lePerso->range = 600;
             lePerso->damage = 10;
@@ -160,7 +157,7 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t)
 
     lePerso->gameObject.hitBox.x = lePerso->gameObject.X;
     lePerso->gameObject.hitBox.y = lePerso->gameObject.Y;
-    lePerso->gameObject.hitBox.w = sprite_getWidth(perso_getWalkSprite(lePerso))/2;
+    lePerso->gameObject.hitBox.w = sprite_getWidth(perso_getWalkSprite(lePerso));
     lePerso->gameObject.hitBox.h = sprite_getHeight(perso_getWalkSprite(lePerso));
 
     lePerso->attackBox.x = lePerso->gameObject.X + sprite_getWidth(perso_getWalkSprite(lePerso))/2;
@@ -208,13 +205,13 @@ SDL_Rect * perso_getAttackBox(perso * p)
 {
     if(p->sprAttack.flip == SDL_FLIP_NONE)
     {
-        p->attackBox.x = p->gameObject.X + p->gameObject.boxCollider.w/2 + p->attackBoxOffset.x;
-        p->attackBox.y = p->gameObject.Y + p->attackBoxOffset.y;
+        p->attackBox.x = gameObject_getBoxCollider(&p->gameObject)->x + p->gameObject.hitBox.w/2 + p->attackBoxOffset.x;
+        p->attackBox.y = gameObject_getBoxCollider(&p->gameObject)->y + p->attackBoxOffset.y;
     }
     else
     {
-        p->attackBox.x = p->gameObject.X + p->gameObject.boxCollider.w/2 - p->attackBoxOffset.x;
-        p->attackBox.y = p->gameObject.Y + p->attackBoxOffset.y;
+        p->attackBox.x = gameObject_getBoxCollider(&p->gameObject)->x + p->gameObject.hitBox.w/2 - p->attackBoxOffset.x;
+        p->attackBox.y = gameObject_getBoxCollider(&p->gameObject)->y + p->attackBoxOffset.y;
     }
     return &p->attackBox;
 }
@@ -240,11 +237,6 @@ void perso_setAttack(struct perso * p)
         p->attacking = 1;
         sprite_RESET(&p->sprAttack);
     }
-}
-
-void perso_setPlayer(perso * p)
-{
-    p->playerControled = SDL_TRUE;
 }
 
 void perso_setHitted(perso * p, perso * p2, int dmg)
@@ -357,28 +349,29 @@ void perso_Simulate(perso * lePerso, Uint32 ticks)
         }
 
         //Simuler le personnage
-        if(lePerso->pTarget != NULL && lePerso->playerControled == SDL_FALSE)
+        if(lePerso->playerControled == SDL_FALSE)
             {
-                if(lePerso->attacking != 2 && lePerso->attacking != 1)
-                    perso_setWalk(lePerso);
 
                 if(sprite_getFrame(perso_getAttackSprite(lePerso)) < lePerso->attackFrame - 2)
                 {
-                    if(lePerso->pTarget->X > lePerso->gameObject.X)
+                    if(lePerso->pTarget != NULL)
                     {
-                        sprite_FLIP_RIGHT(&lePerso->sprAttack);
-                        sprite_FLIP_RIGHT(&lePerso->sprWalk);
-                        sprite_FLIP_RIGHT(&lePerso->sprHit);
-                        sprite_FLIP_RIGHT(&lePerso->sprDead);
-                        sprite_FLIP_RIGHT(&lePerso->sprIdle);
-                    }
-                    else if(lePerso->pTarget->X < lePerso->gameObject.X)
-                    {
-                        sprite_FLIP_LEFT(&lePerso->sprAttack);
-                        sprite_FLIP_LEFT(&lePerso->sprWalk);
-                        sprite_FLIP_LEFT(&lePerso->sprHit);
-                        sprite_FLIP_LEFT(&lePerso->sprIdle);
-                        sprite_FLIP_LEFT(&lePerso->sprDead);
+                        if(lePerso->pTarget->X > lePerso->gameObject.X)
+                        {
+                            sprite_FLIP_RIGHT(&lePerso->sprAttack);
+                            sprite_FLIP_RIGHT(&lePerso->sprWalk);
+                            sprite_FLIP_RIGHT(&lePerso->sprHit);
+                            sprite_FLIP_RIGHT(&lePerso->sprDead);
+                            sprite_FLIP_RIGHT(&lePerso->sprIdle);
+                        }
+                        else if(lePerso->pTarget->X < lePerso->gameObject.X)
+                        {
+                            sprite_FLIP_LEFT(&lePerso->sprAttack);
+                            sprite_FLIP_LEFT(&lePerso->sprWalk);
+                            sprite_FLIP_LEFT(&lePerso->sprHit);
+                            sprite_FLIP_LEFT(&lePerso->sprIdle);
+                            sprite_FLIP_LEFT(&lePerso->sprDead);
+                        }
                     }
                 }
                 if(lePerso->attacking == 0 || lePerso->attacking == 3 )

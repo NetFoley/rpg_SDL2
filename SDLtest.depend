@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1580659585 source:d:\netfo\documents\ludus\c\sdltest\main.c
+1583770049 source:d:\netfo\documents\ludus\c\sdltest\main.c
 	"SDL.h"
 	"SDL_image.h"
 	"layer.h"
@@ -357,7 +357,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1580725932 d:\netfo\documents\ludus\c\sdltest\perso.h
+1583147728 d:\netfo\documents\ludus\c\sdltest\perso.h
 	"sprite.h"
 	"gameObject.h"
 	"IA.h"
@@ -367,14 +367,14 @@
 	"SDL.h"
 	"SDL_image.h"
 
-1580649410 d:\netfo\documents\ludus\c\sdltest\layer.h
+1584051460 d:\netfo\documents\ludus\c\sdltest\layer.h
 	<stdio.h>
 	<math.h>
 	"perso.h"
 	"object.h"
 	"IA.h"
 
-1580725840 d:\netfo\documents\ludus\c\sdltest\sprite.h
+1581343085 d:\netfo\documents\ludus\c\sdltest\sprite.h
 	<stdio.h>
 
 1574431394 d:\netfo\documents\ludus\c\sdltest\skeleton.h
@@ -384,17 +384,17 @@
 	"sprite.h"
 	"gameObject.h"
 
-1580659416 d:\netfo\documents\ludus\c\sdltest\gameobject.h
+1583147669 d:\netfo\documents\ludus\c\sdltest\gameobject.h
 	<math.h>
 	"IA.h"
 	"perso.h"
 
-1580645631 d:\netfo\documents\ludus\c\sdltest\ia.h
+1582482404 d:\netfo\documents\ludus\c\sdltest\ia.h
 	"pile.h"
 
-1580640789 d:\netfo\documents\ludus\c\sdltest\pile.h
+1580844723 d:\netfo\documents\ludus\c\sdltest\pile.h
 
-1580641184 source:d:\netfo\documents\ludus\c\sdltest\pile.c
+1580847334 source:d:\netfo\documents\ludus\c\sdltest\pile.c
 	<stdio.h>
 	<stdlib.h>
 	"pile.h"

@@ -4,7 +4,7 @@
 
 File *initialiser()
 {
-    File *file = malloc(sizeof(*file));
+    File *file = malloc(sizeof(file));
     file->premier = NULL;
 
     return file;
@@ -60,6 +60,13 @@ pos2D defiler(File *file)
     }
 
     return nombreDefile;
+}
+
+void viderFile(File * file)
+{
+    if(file != NULL)
+        while(file->premier != NULL)
+            defiler(file);
 }
 
 void afficherFile(File *file)
