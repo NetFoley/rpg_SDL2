@@ -3,6 +3,8 @@
 
 #include "sprite.h"
 #include "gameObject.h"
+#include "boxDrawer.h"
+#include "weapon.h"
 #include "IA.h"
 #include <math.h>
 
@@ -33,7 +35,7 @@ typedef struct perso {
     gameObject * pTarget;
     File * path;
 
-    SDL_Rect attackBox;
+    weapon * weapon;
     //pTarget target;
 }perso;
 /*
@@ -44,20 +46,21 @@ typedef struct pTarget {
 void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, int y);
 void perso_setWalk(struct perso * lePerso);
 void perso_setAttack(struct perso * lePerso);
-void perso_setHitted(perso * p, perso * p2, int dmg);
+void perso_setHitted(perso * p, perso * p2, weapon * weapon);
 void perso_setDead(perso * p);
 void perso_setIdle(perso * p);
 void perso_setTarget(perso * lePerso, gameObject * target);
 
-void perso_DRAW(perso * lePerso,  SDL_Renderer * renderer, int offsetX, int offsetY);
+void perso_DRAW(perso * lePerso,  SDL_Renderer * renderer, int offsetX, int offsetY, SDL_bool debugOn);
 void perso_MOVETO(struct perso * lePerso, int posX, int posY);
-void perso_Simulate(perso * lePerso, Uint32 ticks);
+void perso_Simulate(perso * lePerso, char sMap[50], Uint32 ticks);
 gameObject * perso_getGameObject(perso * p);
 int perso_getHitRange(perso * p);
 int collision(perso p1, perso p2);
 SDL_Rect * perso_getHitBox(perso * p);
 sprite perso_getAttackSprite(perso * p);
 sprite perso_getWalkSprite(perso * p);
+sprite perso_getIdleSprite(perso * p);
 int perso_getRaceAttitude(perso * p, race r);
 int getDetecRange(perso p);
 int getDistanceBetween(perso * p, gameObject * o);
@@ -79,17 +82,19 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, in
     char tPersoH[50];
     char tPersoD[50];
     char tPersoI[50];
+        lePerso->gameObject.timeSinceLastFrame = 0;
 
     switch (t)
     {
         case 0 :
+            gameObject_INI(&lePerso->gameObject, 30, x, y, 4, 0.8, 1, renderer);
             strcpy(tPersoA, "Skeleton_Attack.png");
             strcpy(tPersoW, "Skeleton_Walk.png");
             strcpy(tPersoH, "Skeleton_Hit.png");
             strcpy(tPersoD, "Skeleton_Dead.png");
             strcpy(tPersoI, "Skeleton_Idle.png");
             sprite_INI(&lePerso->sprWalk, tPersoW, 0, 0, 22, 1, renderer);
-            sprite_setTickInBetween(&lePerso->sprWalk, 90);
+            sprite_setTickInBetween(&lePerso->sprWalk, 70);
 
             sprite_INI(&lePerso->sprAttack, tPersoA, 8, -3, 43, 1, renderer);
             sprite_setTickInBetween(&lePerso->sprAttack, 80);
@@ -106,16 +111,18 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, in
             lePerso->race = undead;
             lePerso->raceAttitude[undead] = 10;
             lePerso->raceAttitude[human] = -10;
-            lePerso->attackBoxOffset.x = 60;
+            lePerso->attackBoxOffset.x = sprite_getWidth(perso_getWalkSprite(lePerso));
             lePerso->attackBoxOffset.y = sprite_getHeight(perso_getWalkSprite(lePerso))/2;
-            gameObject_INI(&lePerso->gameObject, 30, x, y, 4, 0.8, 1, renderer);
             lePerso->attackFrame = 7;
             lePerso->range = 450;
             lePerso->damage = 15;
             lePerso->hitRange = 130;
+
+
             break;
 
         case 1 :
+            gameObject_INI(&lePerso->gameObject, 60, x, y, 6, 1, 1, renderer);
             strcpy(tPersoA, "knight_attack.png");
             strcpy(tPersoB, "knight_block.png");
             strcpy(tPersoW, "knight_walk2.png");
@@ -127,7 +134,7 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, in
             sprite_setTickInBetween(&lePerso->sprWalk, 90);
 
             sprite_INI(&lePerso->sprAttack, tPersoA, 18, -20, 80, 1, renderer);
-            sprite_setTickInBetween(&lePerso->sprAttack, 120);
+            sprite_setTickInBetween(&lePerso->sprAttack, 70);
 
             sprite_INI(&lePerso->sprBlock, tPersoD, 0, 0, 43, 1, renderer);
             sprite_setTickInBetween(&lePerso->sprBlock, 80);
@@ -136,7 +143,7 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, in
             sprite_setTickInBetween(&lePerso->sprHit, 100);
 
             sprite_INI(&lePerso->sprIdle, tPersoI, 0, 0, 42, 1, renderer);
-            sprite_setTickInBetween(&lePerso->sprIdle, 300);
+            sprite_setTickInBetween(&lePerso->sprIdle, 150);
 
             sprite_INI(&lePerso->sprDead, tPersoD, 0, 0, 43, 1, renderer);
             sprite_setTickInBetween(&lePerso->sprDead, 150);
@@ -145,25 +152,21 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, in
             lePerso->raceAttitude[undead] = -30;
             lePerso->raceAttitude[human] = 10;
             lePerso->hitRange = 90;
-            lePerso->attackBoxOffset.x = 50;
+            lePerso->attackBoxOffset.x = 20;
             lePerso->attackBoxOffset.y = sprite_getHeight(perso_getWalkSprite(lePerso))/2;
-            gameObject_INI(&lePerso->gameObject, 60, x, y, 6, 1, 1, renderer);
             lePerso->attackFrame = 5;
             lePerso->range = 600;
             lePerso->damage = 10;
+
             break;
 
     }
 
     lePerso->gameObject.hitBox.x = lePerso->gameObject.X;
     lePerso->gameObject.hitBox.y = lePerso->gameObject.Y;
-    lePerso->gameObject.hitBox.w = sprite_getWidth(perso_getWalkSprite(lePerso));
-    lePerso->gameObject.hitBox.h = sprite_getHeight(perso_getWalkSprite(lePerso));
+    lePerso->gameObject.hitBox.w = sprite_getWidth(perso_getIdleSprite(lePerso))/2;
+    lePerso->gameObject.hitBox.h = sprite_getHeight(perso_getIdleSprite(lePerso))/2;
 
-    lePerso->attackBox.x = lePerso->gameObject.X + sprite_getWidth(perso_getWalkSprite(lePerso))/2;
-    lePerso->attackBox.y = lePerso->gameObject.Y + sprite_getHeight(perso_getWalkSprite(lePerso))/1.5;
-    lePerso->attackBox.w = sprite_getWidth(perso_getWalkSprite(lePerso))/4;
-    lePerso->attackBox.h = sprite_getHeight(perso_getWalkSprite(lePerso))/4;
 
     lePerso->gameObject.boxCollider.w = TILESIZE;
     lePerso->gameObject.boxCollider.h = TILESIZE;
@@ -174,6 +177,10 @@ void perso_INI(struct perso * lePerso, SDL_Renderer * renderer, int t, int x, in
     lePerso->playerControled = SDL_FALSE;
     lePerso->pTarget = NULL;
     lePerso->path = initialiser();
+}
+void perso_equipWeapon(perso * p, weapon * w)
+{
+    p->weapon = w;
 }
 
 int getDistanceBetween(perso * p, gameObject * o)
@@ -205,15 +212,15 @@ SDL_Rect * perso_getAttackBox(perso * p)
 {
     if(p->sprAttack.flip == SDL_FLIP_NONE)
     {
-        p->attackBox.x = gameObject_getBoxCollider(&p->gameObject)->x + p->gameObject.hitBox.w/2 + p->attackBoxOffset.x;
-        p->attackBox.y = gameObject_getBoxCollider(&p->gameObject)->y + p->attackBoxOffset.y;
+        p->weapon->hitBox.x = p->gameObject.X + p->gameObject.hitBox.w;
+        p->weapon->hitBox.y = p->gameObject.Y + p->gameObject.hitBox.h + p->weapon->hitBox.h/2;
     }
     else
     {
-        p->attackBox.x = gameObject_getBoxCollider(&p->gameObject)->x + p->gameObject.hitBox.w/2 - p->attackBoxOffset.x;
-        p->attackBox.y = gameObject_getBoxCollider(&p->gameObject)->y + p->attackBoxOffset.y;
+        p->weapon->hitBox.x = p->gameObject.X - p->weapon->hitBox.w;
+        p->weapon->hitBox.y = p->gameObject.Y + p->gameObject.hitBox.h + p->weapon->hitBox.h/2;
     }
-    return &p->attackBox;
+    return &p->weapon->hitBox;
 }
 
 void perso_setWalk(struct perso * p)
@@ -239,19 +246,19 @@ void perso_setAttack(struct perso * p)
     }
 }
 
-void perso_setHitted(perso * p, perso * p2, int dmg)
+void perso_setHitted(perso * p, perso * p2, weapon * weapon)
 {
     // if(p->attacking != 2 && p->attacking != 4)
     if((p->attacking != 2 && p->attacking != 4) || (p->attacking == 2 && sprite_getFrame(p->sprHit) > 1))
     {
         p->attacking = 2;
         sprite_RESET(&p->sprHit);
-        gameObject_addLife(&p->gameObject, -dmg);
-        printf("Degat pris %i : vie = %i dmg = %i\n\n", p->gameObject.id, p->gameObject.life, dmg);
-        if(p2 != NULL)
+        gameObject_addLife(&p->gameObject, -weapon->damage);
+        printf("ID(%i) suffer %i damage(%i/%i) from %s\n", p->gameObject.id, weapon->damage, p->gameObject.life, p->gameObject.maxLife, weapon->name);
+        if(p2 != NULL && p->pTarget != p2)
         {
             perso_setTarget(p, perso_getGameObject(p2));
-            printf("ID : %i Targetting ID : %i\n", p->gameObject.id, p2->gameObject.id);
+            printf("ID(%i) targetting ID(%i)\n\n", p->gameObject.id, p2->gameObject.id);
         }
     }
 }
@@ -280,26 +287,68 @@ gameObject * perso_getGameObject(perso * p)
 }
 
 
-void perso_DRAW(perso * lePerso,  SDL_Renderer * renderer, int offsetX, int offsetY)
+void perso_DRAW(perso * lePerso,  SDL_Renderer * renderer, int offsetX, int offsetY, SDL_bool debugOn)
 {
     switch (lePerso->attacking)
     {
         case 0 :
-            sprite_DRAW(&lePerso->sprWalk, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY);
+            if(sprite_DRAW(&lePerso->sprWalk, lePerso->gameObject.timeSinceLastFrame, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY))
+                lePerso->gameObject.timeSinceLastFrame = SDL_GetTicks();
         break;
         case 1 :
-            sprite_DRAW(&lePerso->sprAttack, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY);
+            if(sprite_DRAW(&lePerso->sprAttack, lePerso->gameObject.timeSinceLastFrame, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY))
+                lePerso->gameObject.timeSinceLastFrame = SDL_GetTicks();
         break;
         case 2 :
-            sprite_DRAW(&lePerso->sprHit, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY);
+            if(sprite_DRAW(&lePerso->sprHit, lePerso->gameObject.timeSinceLastFrame, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY))
+                lePerso->gameObject.timeSinceLastFrame = SDL_GetTicks();
         break;
         case 3 :
-            sprite_DRAW(&lePerso->sprIdle, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY);
+            if(sprite_DRAW(&lePerso->sprIdle, lePerso->gameObject.timeSinceLastFrame, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY))
+                lePerso->gameObject.timeSinceLastFrame = SDL_GetTicks();
         break;
         case 4 :
-            sprite_FDRAW(&lePerso->sprDead, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY);
-
+            if(sprite_FDRAW(&lePerso->sprDead, lePerso->gameObject.timeSinceLastFrame, renderer, lePerso->gameObject.X + offsetX, lePerso->gameObject.Y + offsetY))
+                lePerso->gameObject.timeSinceLastFrame = SDL_GetTicks();
         break;
+    }
+    if(debugOn)
+    {
+        SDL_Color cBlue;
+        cBlue.a = 0;
+        cBlue.b = 150;
+        cBlue.r = 50;
+        cBlue.g = 50;
+        SDL_Color cRed;
+        cRed.a = 255;
+        cRed.b = 50;
+        cRed.r = 150;
+        cRed.g = 50;
+        SDL_Color cGreen;
+        cRed.a = 200;
+        cRed.b = 50;
+        cRed.r = 50;
+        cRed.g = 150;
+
+        SDL_Rect attackBox;
+        attackBox.x = lePerso->weapon->hitBox.x + offsetX;
+        attackBox.y = lePerso->weapon->hitBox.y + offsetY;
+        attackBox.h = lePerso->weapon->hitBox.h;
+        attackBox.w = lePerso->weapon->hitBox.w;
+        SDL_Rect hitBox;
+        hitBox.x = lePerso->gameObject.hitBox.x + offsetX;
+        hitBox.y = lePerso->gameObject.hitBox.y + offsetY;
+        hitBox.h = lePerso->gameObject.hitBox.h;
+        hitBox.w = lePerso->gameObject.hitBox.w;
+        SDL_Rect boxCollider;
+        boxCollider.x = lePerso->gameObject.boxCollider.x + offsetX;
+        boxCollider.y = lePerso->gameObject.boxCollider.y + offsetY;
+        boxCollider.h = lePerso->gameObject.boxCollider.h;
+        boxCollider.w = lePerso->gameObject.boxCollider.w;
+
+        draw_Box(attackBox, cBlue, renderer);
+        draw_Box(hitBox, cRed, renderer);
+        draw_Box(boxCollider, cGreen, renderer);
     }
 
 }
@@ -334,7 +383,7 @@ void perso_setTarget(perso * lePerso, gameObject * target)
         lePerso->pTarget = target;
 }
 
-void perso_Simulate(perso * lePerso, Uint32 ticks)
+void perso_Simulate(perso * lePerso, char sMap[50], Uint32 ticks)
 {
     gameObject_getHitBox(&lePerso->gameObject);
     if(gameObject_getLife(perso_getGameObject(lePerso)) <= 0)
@@ -354,23 +403,27 @@ void perso_Simulate(perso * lePerso, Uint32 ticks)
 
                 if(sprite_getFrame(perso_getAttackSprite(lePerso)) < lePerso->attackFrame - 2)
                 {
-                    if(lePerso->pTarget != NULL)
+                    if(lePerso->path->premier != NULL)
                     {
-                        if(lePerso->pTarget->X > lePerso->gameObject.X)
+                        if(lePerso->path->premier->suivant != NULL)
                         {
-                            sprite_FLIP_RIGHT(&lePerso->sprAttack);
-                            sprite_FLIP_RIGHT(&lePerso->sprWalk);
-                            sprite_FLIP_RIGHT(&lePerso->sprHit);
-                            sprite_FLIP_RIGHT(&lePerso->sprDead);
-                            sprite_FLIP_RIGHT(&lePerso->sprIdle);
-                        }
-                        else if(lePerso->pTarget->X < lePerso->gameObject.X)
-                        {
-                            sprite_FLIP_LEFT(&lePerso->sprAttack);
-                            sprite_FLIP_LEFT(&lePerso->sprWalk);
-                            sprite_FLIP_LEFT(&lePerso->sprHit);
-                            sprite_FLIP_LEFT(&lePerso->sprIdle);
-                            sprite_FLIP_LEFT(&lePerso->sprDead);
+                            //printf("%i %i\n", lePerso->path->premier->suivant->nombre.x, (int)(lePerso->gameObject.X+TILESIZE/2)/TILESIZE);
+                            if(lePerso->path->premier->suivant->nombre.x > (int)(lePerso->gameObject.X+TILESIZE/2)/TILESIZE)
+                            {
+                                sprite_FLIP_RIGHT(&lePerso->sprAttack);
+                                sprite_FLIP_RIGHT(&lePerso->sprWalk);
+                                sprite_FLIP_RIGHT(&lePerso->sprHit);
+                                sprite_FLIP_RIGHT(&lePerso->sprDead);
+                                sprite_FLIP_RIGHT(&lePerso->sprIdle);
+                            }
+                            else
+                            {
+                                sprite_FLIP_LEFT(&lePerso->sprAttack);
+                                sprite_FLIP_LEFT(&lePerso->sprWalk);
+                                sprite_FLIP_LEFT(&lePerso->sprHit);
+                                sprite_FLIP_LEFT(&lePerso->sprIdle);
+                                sprite_FLIP_LEFT(&lePerso->sprDead);
+                            }
                         }
                     }
                 }
@@ -383,7 +436,7 @@ void perso_Simulate(perso * lePerso, Uint32 ticks)
                     //Verifier la position de sa "target"
 
                     //Effectuer les déplacements
-                    gameObject_simulate(&lePerso->gameObject, lePerso->pTarget, lePerso->path);
+                    gameObject_simulate(&lePerso->gameObject, lePerso->pTarget, sMap, lePerso->path);
 
                 }
                 else
@@ -498,6 +551,11 @@ sprite perso_getAttackSprite(perso * p)
 sprite perso_getWalkSprite(perso * p)
 {
     return p->sprWalk;
+}
+
+sprite perso_getIdleSprite(perso * p)
+{
+    return p->sprIdle;
 }
 
 int collision(perso p1, perso p2)

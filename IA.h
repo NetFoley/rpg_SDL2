@@ -210,11 +210,11 @@ void iniPathMap(pathMap * pm, int width, int height)
 {
     pm->tailleX = width+1;
     pm->tailleY = height+1;
-    pm->cDirMap = (char**)malloc((pm->tailleY+1)*sizeof(char*));
+    pm->cDirMap = (char**)malloc((pm->tailleY)*sizeof(char*));
 
-    for(int i = 0; i <= pm->tailleY; i++)
+    for(int i = 0; i < pm->tailleY+1; i++)
     {
-        pm->cDirMap[i] = (char*)malloc((pm->tailleX+1)*sizeof(char));
+        pm->cDirMap[i] = (char*)malloc((pm->tailleX)*sizeof(char));
         pm->cDirMap[i][0] = '\0';
     }
 
@@ -332,36 +332,38 @@ void map_readMap(char sMap[50], pathMap * pm)
 
 void iniFrontier(frontier * frt)
 {
-    frt->taille = 1;
-    frt->coord = (pos2D*)malloc(150 * sizeof(pos2D));
-
     //ALLOCATION DYNAMIQUE INFONCTIONNEL
-    frt = (frontier*)malloc(sizeof(frt) + 150 * sizeof(pos2D));
-
+    //frt = (frontier*)malloc(sizeof(frontier));
+    frt->taille = 1;
+    frt->coord = (pos2D*)malloc(frt->taille * sizeof(pos2D));
 }
 
 void map_putFrontier(pathMap * cPathMap, frontier * frt, int x, int y)
 {
     if(getPathMap(cPathMap, x+1, y) == '.' && !(x+1 == frt->coord[frt->taille-1].x && y == frt->coord[frt->taille-1].y))
     {
+        frt->coord =(pos2D*)realloc(frt->coord, (frt->taille+1)*(sizeof(pos2D)));
         frt->coord[frt->taille].x = x+1;
         frt->coord[frt->taille].y = y;
         frt->taille++;
     }
     if(getPathMap(cPathMap, x-1, y) == '.' && !(x-1 == frt->coord[frt->taille-1].x && y == frt->coord[frt->taille-1].y))
     {
+        frt->coord =(pos2D*)realloc(frt->coord, (frt->taille+1)*(sizeof(pos2D)));
         frt->coord[frt->taille].x = x-1;
         frt->coord[frt->taille].y = y;
         frt->taille++;
     }
     if(getPathMap(cPathMap, x, y+1) == '.' && !(x == frt->coord[frt->taille-1].x && y+1 == frt->coord[frt->taille-1].y))
     {
+        frt->coord =(pos2D*)realloc(frt->coord, (frt->taille+1)*(sizeof(pos2D)));
         frt->coord[frt->taille].x = x;
         frt->coord[frt->taille].y = y+1;
         frt->taille++;
     }
     if(getPathMap(cPathMap, x, y-1) == '.' && !(x == frt->coord[frt->taille-1].x && y-1 == frt->coord[frt->taille-1].y))
     {
+        frt->coord =(pos2D*)realloc(frt->coord, (frt->taille+1)*(sizeof(pos2D)));
         frt->coord[frt->taille].x = x;
         frt->coord[frt->taille].y = y-1;
         frt->taille++;

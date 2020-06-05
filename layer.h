@@ -7,6 +7,7 @@
 #include "perso.h"
 #include "object.h"
 #include "IA.h"
+#include "weapon.h"
 
 #define PI 3.14159265
 
@@ -15,12 +16,16 @@ typedef struct layer{
     int offsetY;
 	perso * persos;
 	object * objects;
+	weapon * weapons;
 	perso * player;
-    int timeSinceLastAction;
+    Uint32 timeSinceLastAction;
     int timeBetweenAction;
 	int nbPerso;
 	int nbObject;
+	int nbWeapon;
 	int idPlayer;
+    char * sMap;
+	SDL_bool debugMode;
 }layer;
 
 void layer_INI(layer * leLayer, SDL_Renderer * renderer);
@@ -41,18 +46,23 @@ void layer_INI(layer * leLayer, SDL_Renderer * renderer)
     leLayer->offsetY = 0;
     leLayer->persos =(perso*)malloc(2*sizeof(perso));
     leLayer->objects =(object*)malloc(2*sizeof(object));
+    leLayer->weapons =(weapon*)malloc(2*sizeof(weapon));
 	leLayer->nbPerso = 0;
 	leLayer->nbObject = 0;
+	leLayer->nbWeapon = 0;
 	leLayer->timeSinceLastAction = SDL_GetTicks();
 	leLayer->timeBetweenAction = 30;
 	leLayer->idPlayer = 0;
+	leLayer->sMap = NULL;
 	leLayer->player = NULL;
+	leLayer->debugMode = SDL_FALSE;
 }
 
 void layer_AddSquelette(layer * leLayer, SDL_Renderer * renderer, int x, int y)
 {
-    leLayer->persos =(perso*)realloc(leLayer->persos, (leLayer->nbPerso+2)*(sizeof(perso)));
+    leLayer->persos =(perso*)realloc(leLayer->persos, (leLayer->nbPerso+1)*(sizeof(perso)));
     perso_INI(&leLayer->persos[leLayer->nbPerso], renderer, 0, x, y);
+    perso_equipWeapon(&leLayer->persos[leLayer->nbPerso], &leLayer->weapons[1]);
     leLayer->nbPerso++;
     //printf("%i loaded perso\n\n", leLayer->nbPerso);
 }
@@ -60,16 +70,24 @@ void layer_AddSquelette(layer * leLayer, SDL_Renderer * renderer, int x, int y)
 void layer_AddSoldier(layer * leLayer, SDL_Renderer * renderer, int x, int y)
 {
 
-    leLayer->persos =(perso*)realloc(leLayer->persos, (leLayer->nbPerso+2)*(sizeof(perso)));
+    leLayer->persos =(perso*)realloc(leLayer->persos, (leLayer->nbPerso+1)*(sizeof(perso)));
     perso_INI(&leLayer->persos[leLayer->nbPerso], renderer, 1, x, y);
+    perso_equipWeapon(&leLayer->persos[leLayer->nbPerso], &leLayer->weapons[0]);
     leLayer->nbPerso++;
     //printf("%i loaded perso\n\n", leLayer->nbPerso);
+}
+
+void layer_AddWeapon(layer * l, char * name, type type, int damage, int h, int w)
+{
+    l->weapons =(weapon*)realloc(l->weapons, (l->nbWeapon+1)*(sizeof(weapon)));
+    INIT_weapon(&l->weapons[l->nbWeapon], name, type, damage, h, w);
+    l->nbWeapon++;
 }
 
 void layer_AddCoffre(layer * leLayer, SDL_Renderer * renderer, int x, int y)
 {
     //CA VA REBUGGER CORRIGER LA MEMOIRE AJOUTE AVEC LE BLOCK DE PATHFINDING
-    leLayer->objects =(object*)realloc(leLayer->objects, (leLayer->nbObject+2)*(sizeof(object)));
+    leLayer->objects =(object*)realloc(leLayer->objects, (leLayer->nbObject+1)*(sizeof(object)));
     object_INI(&leLayer->objects[leLayer->nbObject], renderer, 0, x ,y);
     leLayer->nbObject++;
     //printf("%i loaded objects\n\n", leLayer->nbObject);
@@ -87,6 +105,7 @@ void layer_AddCoffre(layer * leLayer, SDL_Renderer * renderer, int x, int y)
 void layer_readMap(layer * l, char sMap[50], SDL_Renderer * renderer)
 {
     FILE * pFile;
+    l->sMap = sMap;
     pFile = fopen(sMap, "r");
     if (pFile != NULL)
     {
@@ -103,7 +122,7 @@ void layer_readMap(layer * l, char sMap[50], SDL_Renderer * renderer)
             case 'P' :
                 layer_AddSoldier(l, renderer, i*TILESIZE, j*TILESIZE);
                 layer_setPlayer(l, &l->persos[l->nbPerso-1]);
-                printf("Joueur id : %i\n", l->persos[l->nbPerso-1].gameObject.id);
+                printf("Player id : %i\n", l->persos[l->nbPerso-1].gameObject.id);
                 break;
             case '1' :
                 layer_AddSoldier(l, renderer, i*TILESIZE, j*TILESIZE);
@@ -156,6 +175,14 @@ GESTION DES ENTREES CLAVIER
         l->player = layer_getPersoById(l, l->idPlayer);
     }
 
+    if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_F3)
+    {
+        if(l->debugMode == SDL_TRUE)
+            l->debugMode = SDL_FALSE;
+        else if(l->debugMode == SDL_FALSE)
+            l->debugMode = SDL_TRUE;
+    }
+
     if(l->player->gameObject.life > 0 )
     {
         /*
@@ -191,6 +218,8 @@ GESTION DES ENTREES CLAVIER
         if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_f) {
             perso_setAttack(l->player);
         }
+
+
 
             static SDL_bool Z=0,Q=0,S=0,D=0;
 
@@ -282,8 +311,8 @@ void layer_DRAW(layer * leLayer, SDL_Renderer * renderer, SDL_Window * window)
     int x,y;
     SDL_GetWindowSize(window, &x, &y);
 
-    leLayer->offsetX = x/2 - gameObject_getHitBox(&leLayer->player->gameObject)->x + gameObject_getHitBox(&leLayer->player->gameObject)->w/2;
-    leLayer->offsetY = y/2 - gameObject_getHitBox(&leLayer->player->gameObject)->y + gameObject_getHitBox(&leLayer->player->gameObject)->h/2;
+    leLayer->offsetX = x/2 - gameObject_getHitBox(&leLayer->player->gameObject)->x + TILESIZE;
+    leLayer->offsetY = y/2 - gameObject_getHitBox(&leLayer->player->gameObject)->y + TILESIZE;
 
     //Trier par Y croissant
     int temp;
@@ -329,7 +358,7 @@ void layer_DRAW(layer * leLayer, SDL_Renderer * renderer, SDL_Window * window)
     //Afficher les entités
     for( int i = 0; i < leLayer->nbPerso; i++)
     {
-        perso_DRAW(&leLayer->persos[nOrderPerso[i]], renderer, leLayer->offsetX, leLayer->offsetY);
+        perso_DRAW(&leLayer->persos[nOrderPerso[i]], renderer, leLayer->offsetX, leLayer->offsetY, leLayer->debugMode);
     }
 
     free(nOrderPerso);
@@ -352,9 +381,9 @@ void layer_DRAW(layer * leLayer, SDL_Renderer * renderer, SDL_Window * window)
                 if(SDL_HasIntersection(perso_getAttackBox(&leLayer->persos[i]), gameObject_getHitBox(&leLayer->persos[j].gameObject)))
                 {
                     if(j!=0)
-                        perso_setHitted(&leLayer->persos[j], &leLayer->persos[i], leLayer->persos[i].damage);
+                        perso_setHitted(&leLayer->persos[j], &leLayer->persos[i], leLayer->persos[i].weapon);
                     else
-                        perso_setHitted(&leLayer->persos[j], NULL, leLayer->persos[i].damage);
+                        perso_setHitted(&leLayer->persos[j], NULL, leLayer->persos[i].weapon);
 
                 }
             }
@@ -380,7 +409,7 @@ void layer_DRAW(layer * leLayer, SDL_Renderer * renderer, SDL_Window * window)
             }
         }
 
-        perso_Simulate(&leLayer->persos[i], ticks);
+        perso_Simulate(&leLayer->persos[i], leLayer->sMap, ticks);
     }
 
     /***************************************

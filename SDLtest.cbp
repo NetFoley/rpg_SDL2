@@ -30,6 +30,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="lib/SDL2-2.0.10/i686-w64-mingw32/include" />
 		</Compiler>
 		<Linker>
 			<Add library="D:/netfo/Documents/Ludus/SDL2-2.0.10/i686-w64-mingw32/lib/SDL2_image.lib" />
@@ -37,11 +38,13 @@
 			<Add library="mingw32" />
 			<Add library="SDL2main" />
 			<Add library="SDL2.dll" />
+			<Add directory="lib/SDL2-2.0.10/i686-w64-mingw32/lib" />
 		</Linker>
 		<ExtraCommands>
 			<Add after="XCOPY $(#sdl2)\bin\*.dll $(TARGET_OUTPUT_DIR) /D /Y" />
 		</ExtraCommands>
 		<Unit filename="IA.h" />
+		<Unit filename="boxDrawer.h" />
 		<Unit filename="gameObject.h" />
 		<Unit filename="layer.h" />
 		<Unit filename="main.c">
@@ -54,6 +57,7 @@
 		</Unit>
 		<Unit filename="pile.h" />
 		<Unit filename="sprite.h" />
+		<Unit filename="weapon.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

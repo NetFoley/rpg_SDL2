@@ -15,13 +15,13 @@ typedef struct sprite{
     int alive;
     int frame;
     int tickBetweenFrames;
-    int timeSinceLastFrame;
     int scale;
     SDL_RendererFlip flip;
 }sprite;
 
 void sprite_INI(sprite * leSprite, char cAnim[50], int offsetX, int offsetY, int tailleX, int scale, SDL_Renderer * renderer);
-void sprite_DRAW(sprite * leSprite, SDL_Renderer * renderer, int X, int Y);
+int sprite_DRAW(sprite * leSprite, Uint32 timeSinceLastFrame, SDL_Renderer * renderer, int X, int Y);
+int sprite_FDRAW(sprite * leSprite, Uint32 timeSinceLastFrame, SDL_Renderer * renderer, int X, int Y);
 void sprite_RESET(sprite * leSprite);
 void sprite_FLIP_LEFT(sprite * spr);
 void sprite_FLIP_RIGHT(sprite * spr);
@@ -38,7 +38,6 @@ void sprite_INI(sprite * leSprite, char Anim[50], int offsetX, int offsetY, int 
 
     leSprite->frame = 0;
     leSprite->tickBetweenFrames = 80;
-    leSprite->timeSinceLastFrame = SDL_GetTicks();
     leSprite->scale = 3 * scale;
     leSprite->alive = 1;
     leSprite->flip = SDL_FLIP_NONE;
@@ -64,54 +63,63 @@ void sprite_INI(sprite * leSprite, char Anim[50], int offsetX, int offsetY, int 
     if (!leSprite->texture) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create texture from surface: %s", SDL_GetError());
     }
+
     leSprite->tailleImage = leSprite->surface->w;
     leSprite->imgSize.h = leSprite->surface->h;
     leSprite->imgPos.h = leSprite->imgSize.h * leSprite->scale;
 }
 
-void sprite_DRAW(sprite * leSprite, SDL_Renderer * renderer, int X, int Y)
+int sprite_DRAW(sprite * leSprite, Uint32 timeSinceLastFrame, SDL_Renderer * renderer, int X, int Y)
 {
     if(leSprite == NULL)
         exit(EXIT_FAILURE);
     leSprite->imgPos.x = X + leSprite->offsetX - leSprite->imgPos.w/2;
     leSprite->imgPos.y = Y + leSprite->offsetY - leSprite->imgPos.h/2;
+    int draw = 0;
 
     if(leSprite->imgSize.w * (leSprite->frame+1) < leSprite->tailleImage)
     {
-        if(SDL_GetTicks() - leSprite->timeSinceLastFrame >= leSprite->tickBetweenFrames)
+        if(SDL_GetTicks() - timeSinceLastFrame >= leSprite->tickBetweenFrames)
         {
             leSprite->frame++;
-            leSprite->timeSinceLastFrame = SDL_GetTicks();
+            draw = 1;
         }
     }
     else
     {
-        leSprite->frame = 0;
+        if(SDL_GetTicks() - timeSinceLastFrame >= leSprite->tickBetweenFrames)
+        {
+            leSprite->frame = 0;
+            draw = 1;
+        }
     }
 
 
     leSprite->imgSize.x = leSprite->imgSize.w * leSprite->frame;
 
     SDL_RenderCopyEx(renderer, leSprite->texture, &leSprite->imgSize, &leSprite->imgPos, 0, NULL, leSprite->flip);
+    return draw;
 }
 
-void sprite_FDRAW(sprite * leSprite, SDL_Renderer * renderer, int X, int Y)
+int sprite_FDRAW(sprite * leSprite, Uint32 timeSinceLastFrame, SDL_Renderer * renderer, int X, int Y)
 {
+    int draw = 0;
     leSprite->imgPos.x = X + leSprite->offsetX - leSprite->imgPos.w/2;
     leSprite->imgPos.y = Y + leSprite->offsetY - leSprite->imgPos.h/2;
 
     if(leSprite->imgSize.w * (leSprite->frame+1) < leSprite->tailleImage && leSprite->alive == 1)
     {
-        if(SDL_GetTicks() - leSprite->timeSinceLastFrame >= leSprite->tickBetweenFrames)
+        if(SDL_GetTicks() - timeSinceLastFrame >= leSprite->tickBetweenFrames)
         {
             leSprite->frame++;
-            leSprite->timeSinceLastFrame = SDL_GetTicks();
+            draw = 1;
         }
     }
     else if(leSprite->alive == 1)
     {
         leSprite->frame--;
         leSprite->alive = 0;
+        draw = 1;
     }
 
 
@@ -119,6 +127,7 @@ void sprite_FDRAW(sprite * leSprite, SDL_Renderer * renderer, int X, int Y)
 
     SDL_RenderCopyEx(renderer, leSprite->texture, &leSprite->imgSize, &leSprite->imgPos, 0, NULL, leSprite->flip);
 
+    return draw;
 }
 
 int sprite_animationEnded(sprite spr)

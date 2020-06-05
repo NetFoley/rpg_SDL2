@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1583770049 source:d:\netfo\documents\ludus\c\sdltest\main.c
+1588207281 source:d:\netfo\documents\ludus\c\sdltest\main.c
 	"SDL.h"
 	"SDL_image.h"
 	"layer.h"
@@ -357,9 +357,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583147728 d:\netfo\documents\ludus\c\sdltest\perso.h
+1588332199 d:\netfo\documents\ludus\c\sdltest\perso.h
 	"sprite.h"
 	"gameObject.h"
+	"boxDrawer.h"
+	"weapon.h"
 	"IA.h"
 	<math.h>
 
@@ -367,35 +369,394 @@
 	"SDL.h"
 	"SDL_image.h"
 
-1584051460 d:\netfo\documents\ludus\c\sdltest\layer.h
+1588207222 d:\netfo\documents\ludus\c\sdltest\layer.h
 	<stdio.h>
 	<math.h>
 	"perso.h"
 	"object.h"
 	"IA.h"
+	"weapon.h"
 
-1581343085 d:\netfo\documents\ludus\c\sdltest\sprite.h
+1587506464 d:\netfo\documents\ludus\c\sdltest\sprite.h
 	<stdio.h>
 
 1574431394 d:\netfo\documents\ludus\c\sdltest\skeleton.h
 	"perso.h"
 
-1580725874 d:\netfo\documents\ludus\c\sdltest\object.h
+1587501027 d:\netfo\documents\ludus\c\sdltest\object.h
 	"sprite.h"
 	"gameObject.h"
 
-1583147669 d:\netfo\documents\ludus\c\sdltest\gameobject.h
+1587500403 d:\netfo\documents\ludus\c\sdltest\gameobject.h
 	<math.h>
 	"IA.h"
 	"perso.h"
 
-1582482404 d:\netfo\documents\ludus\c\sdltest\ia.h
+1588359840 d:\netfo\documents\ludus\c\sdltest\ia.h
 	"pile.h"
 
-1580844723 d:\netfo\documents\ludus\c\sdltest\pile.h
+1580848323 d:\netfo\documents\ludus\c\sdltest\pile.h
 
-1580847334 source:d:\netfo\documents\ludus\c\sdltest\pile.c
+1580850934 source:d:\netfo\documents\ludus\c\sdltest\pile.c
 	<stdio.h>
 	<stdlib.h>
 	"pile.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_assert.h"
+	"SDL_atomic.h"
+	"SDL_audio.h"
+	"SDL_clipboard.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_filesystem.h"
+	"SDL_gamecontroller.h"
+	"SDL_haptic.h"
+	"SDL_hints.h"
+	"SDL_joystick.h"
+	"SDL_loadso.h"
+	"SDL_log.h"
+	"SDL_messagebox.h"
+	"SDL_mutex.h"
+	"SDL_power.h"
+	"SDL_render.h"
+	"SDL_rwops.h"
+	"SDL_sensor.h"
+	"SDL_shape.h"
+	"SDL_system.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_version.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<wchar.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<math.h>
+	<float.h>
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	<sal.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_config.h
+	"SDL_platform.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_platform.h
+	"AvailabilityMacros.h"
+	"TargetConditionals.h"
+	<winapifamily.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\begin_code.h
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\close_code.h
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_assert.h
+	"SDL_config.h"
+	"begin_code.h"
+	<signal.h>
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_atomic.h
+	"SDL_stdinc.h"
+	"SDL_platform.h"
+	"begin_code.h"
+	<sys/cpuinline.h>
+	<mbarrier.h>
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_endian.h
+	"SDL_stdinc.h"
+	<endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_atomic.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	<process.h>
+	<stdlib.h>
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_clipboard.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<intrin.h>
+	<altivec.h>
+	<arm_neon.h>
+	<armintr.h>
+	<arm_neon.h>
+	<armintr.h>
+	<arm_neon.h>
+	<mm3dnow.h>
+	<immintrin.h>
+	<mmintrin.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	<pmmintrin.h>
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_gamecontroller.h"
+	"SDL_quit.h"
+	"SDL_gesture.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_pixels.h
+	"SDL_stdinc.h"
+	"SDL_endian.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_rect.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_pixels.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_surface.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_blendmode.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_blendmode.h
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keycode.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_keycode.h
+	"SDL_stdinc.h"
+	"SDL_scancode.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_scancode.h
+	"SDL_stdinc.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_gamecontroller.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_gesture.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"SDL_touch.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_touch.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_filesystem.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_haptic.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_joystick.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_hints.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_log.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_messagebox.h
+	"SDL_stdinc.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_power.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_render.h
+	"SDL_stdinc.h"
+	"SDL_rect.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_sensor.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_shape.h
+	"SDL_stdinc.h"
+	"SDL_pixels.h"
+	"SDL_rect.h"
+	"SDL_surface.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_system.h
+	"SDL_stdinc.h"
+	"SDL_keyboard.h"
+	"SDL_render.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1564032877 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1561873999 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_image.h
+	"SDL.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1587408162 d:\netfo\documents\ludus\c\sdltest\boxdrawer.h
+	"SDL.h"
+
+1588205847 d:\netfo\documents\ludus\c\sdltest\weapon.h
 

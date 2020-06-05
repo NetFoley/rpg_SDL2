@@ -24,6 +24,8 @@ typedef struct gameObject{
     vect2D boxColliderOffset;
     SDL_bool movable;
     SDL_Rect hitBox;
+
+    Uint32 timeSinceLastFrame;
 }gameObject;
 
 void gameObject_INI(gameObject * obj, int maxLife, float X , float Y, float maxV, float a, SDL_bool movable, SDL_Renderer * renderer);
@@ -45,7 +47,7 @@ void setA(gameObject * o, float a);
 void setDA(gameObject * o, float dA);
 void gameObject_addLife(gameObject * o, int l);
 
-void gameObject_simulate(gameObject * o, gameObject * target, File * path);
+void gameObject_simulate(gameObject * o, gameObject * target, char sMap[50], File * path);
 void gameObject_move(gameObject * o);
 void gameObject_slow(float * v, float a);
 void gameObject_setNewBox(gameObject * objt, int x, int y, int w, int h);
@@ -68,102 +70,57 @@ void gameObject_INI(gameObject * obj, int maxLife, float X , float Y, float maxV
     obj->boxCollider.y = Y;
     obj->boxColliderOffset.x = 0;
     obj->boxColliderOffset.y = 0;
+    obj->timeSinceLastFrame = SDL_GetTicks();
     obj->id = attribuerID();
     //printf("Coordonnes %f %f\nID %i\n", X ,Y, obj->id);
 }
 
 
-void gameObject_simulate(gameObject * o, gameObject * target, File * path)
+void gameObject_simulate(gameObject * o, gameObject * target, char sMap[50], File * path)
 {
-    //if(target != NULL)
-    if(target == NULL)
-        viderFile(path);
 
-        if(o->movable == 1)
+    if(o->movable == 1)
+    {
+        gameObject_getBoxCollider(o);
+
+        if(target != NULL)
+            gameObject_getBoxCollider(target);
+        else
+            viderFile(path);
+        /**********************
+              PATHFINDING
+        **********************/
+
+        //READING THE PATH
+        if(path->premier != NULL)
         {
-            gameObject_getBoxCollider(o);
-            if(target != NULL)
-                gameObject_getBoxCollider(target);
-            /**********************
-            WITH PATHFINDING
-            **********************/
-            if(path->premier != NULL)
+            if( path->premier->nombre.x == (int)(o->boxCollider.x+TILESIZE/2)/TILESIZE &&
+                path->premier->nombre.y == (int)(o->boxCollider.y+TILESIZE/2)/TILESIZE)
             {
-                if( path->premier->nombre.x == (int)(o->boxCollider.x+TILESIZE/2)/TILESIZE &&
-                    path->premier->nombre.y == (int)(o->boxCollider.y+TILESIZE/2)/TILESIZE)
-                {
-                    defiler(path);
-
-                    /*
-                    printf("ARRIVER EN CASE %i %i\n", path->premier->nombre.x, path->premier->nombre.y);
-                    if(path->premier != NULL)
-                        printf("Recherche de la case suivante... %i %i\n", path->premier->nombre.x, path->premier->nombre.y);
-                    else
-                        printf("Aucune case suivante\n");
-                    afficherFile(path);
-                    */
-                }
-            }
-            if(path->premier == NULL && target != NULL)
-            {
-                char sMap[50];
-                strcpy(sMap, "map1.map");
-                map_getPath(sMap,
-                (int)(target->boxCollider.x+TILESIZE/2)/TILESIZE,
-                (int)(target->boxCollider.y+TILESIZE/2)/TILESIZE,
-                (int)(o->boxCollider.x+TILESIZE/2)/TILESIZE,
-                (int)(o->boxCollider.y+TILESIZE/2)/TILESIZE,
-                path);
+                viderFile(path);
             }
         }
-            //printf("ACC :%i %i\n", ticks, o->timeSinceLastMove);
-            // printf("POSITION X%f TARGET X%i\nPOSITION Y%f TARGET Y%i\n", ((float)o->boxCollider.x)/TILESIZE, path->premier->nombre.x,
-                   // ((float)o->boxCollider.y)/TILESIZE , path->premier->nombre.y);
-            // printf("POSITION X%f TARGET X%i\nPOSITION Y%f TARGET Y%i\n", (o->X)/TILESIZE, path->premier->nombre.x,
-                   // (o->Y)/TILESIZE , path->premier->nombre.y);
-            // printf("Position (id %i) X : %f Y : %f\n", o->id, o->X/TILESIZE, o->Y/TILESIZE);
-            if(path->premier != NULL)
-            {
-                if ((float)(o->boxCollider.x)/TILESIZE == path->premier->nombre.x)
-                {
-                    gameObject_slow(&o->vX, o->a);
-                }
-                else if((float)(o->boxCollider.x)/TILESIZE < path->premier->nombre.x)
-                {
-                    //printf("ACC :%f %f\n", o->vX, o->a);
-                    addVX(o,o->a);
-                }
-                else
-                {
-                    // printf("-ACC :%f %f\n", o->vX, o->a);
-                    addVX(o,-o->a);
-                }
 
-                if ((float)(o->boxCollider.y)/TILESIZE == path->premier->nombre.y)
-                {
-                    gameObject_slow(&o->vY, o->a);
-                }
-                else if((float)(o->boxCollider.y)/TILESIZE < path->premier->nombre.y)
-                {
-                    // printf("ACC :%f %f\n", o->vY, o->a);
-                    addVY(o,o->a);
-                }
-                else
-                {
-                    // printf("-ACC :%f %f\n", o->vY, o->a);
-                    addVY(o,-o->a);
-                }
-            }
-            /***********************
-            WITHOUT PATHFINDING
-            ***********************/
-            /*
-            //printf("ACC :%i %i\n", ticks, o->timeSinceLastMove);
-            if (o->boxCollider.x + o->boxColliderOffset.x <= target->boxCollider.x  + target->boxColliderOffset.x + target->boxCollider.w && o->boxCollider.x  + o->boxColliderOffset.x +  o->boxCollider.w >= target->boxCollider.x  + target->boxColliderOffset.x)
+        if(path->premier == NULL && target != NULL)
+        {
+            char sMap[50];
+            strcpy(sMap, "map1.map");
+            map_getPath(sMap,
+            (int)(target->boxCollider.x+TILESIZE/2)/TILESIZE,
+            (int)(target->boxCollider.y+TILESIZE/2)/TILESIZE,
+            (int)     (o->boxCollider.x+TILESIZE/2)/TILESIZE,
+            (int)     (o->boxCollider.y+TILESIZE/2)/TILESIZE,
+            path);
+        }
+
+        //MOVING THE OBJECT
+        if(path->premier != NULL)
+        {
+            if ((float)(o->boxCollider.x)/TILESIZE == path->premier->nombre.x)
             {
                 gameObject_slow(&o->vX, o->a);
             }
-            else if(o->boxCollider.x + o->boxColliderOffset.x < target->boxCollider.x + target->boxColliderOffset.x)
+            else if((float)(o->boxCollider.x)/TILESIZE < path->premier->nombre.x)
             {
                 //printf("ACC :%f %f\n", o->vX, o->a);
                 addVX(o,o->a);
@@ -173,12 +130,11 @@ void gameObject_simulate(gameObject * o, gameObject * target, File * path)
                 // printf("-ACC :%f %f\n", o->vX, o->a);
                 addVX(o,-o->a);
             }
-
-            if (o->boxCollider.y - o->boxColliderOffset.y <= target->boxCollider.y - target->boxColliderOffset.y + target->boxCollider.h && o->boxCollider.y  - o->boxColliderOffset.y + o->boxCollider.h >= target->boxCollider.y  - target->boxColliderOffset.y)
+            if ((float)(o->boxCollider.y)/TILESIZE == path->premier->nombre.y)
             {
                 gameObject_slow(&o->vY, o->a);
             }
-            else if(o->boxCollider.y  - o->boxColliderOffset.y < target->boxCollider.y - target->boxColliderOffset.y)
+            else if((float)(o->boxCollider.y)/TILESIZE < path->premier->nombre.y)
             {
                 // printf("ACC :%f %f\n", o->vY, o->a);
                 addVY(o,o->a);
@@ -187,13 +143,9 @@ void gameObject_simulate(gameObject * o, gameObject * target, File * path)
             {
                 // printf("-ACC :%f %f\n", o->vY, o->a);
                 addVY(o,-o->a);
-            }*/
-        else
-        {
-            // printf("TARGET OF %i IS NULL\n", o->id);
+            }
         }
-
-
+    }
 
 }
 
