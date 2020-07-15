@@ -43,21 +43,23 @@
 		<ExtraCommands>
 			<Add after="XCOPY $(#sdl2)\bin\*.dll $(TARGET_OUTPUT_DIR) /D /Y" />
 		</ExtraCommands>
-		<Unit filename="IA.h" />
-		<Unit filename="boxDrawer.h" />
-		<Unit filename="gameObject.h" />
-		<Unit filename="layer.h" />
+		<Unit filename="include/IA.h" />
+		<Unit filename="include/boxDrawer.h" />
+		<Unit filename="include/caracterMatching.h" />
+		<Unit filename="include/gameObject.h" />
+		<Unit filename="include/interface.h" />
+		<Unit filename="include/object.h" />
+		<Unit filename="include/perso.h" />
+		<Unit filename="include/pile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="include/pile.h" />
+		<Unit filename="include/scene.h" />
+		<Unit filename="include/sprite.h" />
+		<Unit filename="include/weapon.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="object.h" />
-		<Unit filename="perso.h" />
-		<Unit filename="pile.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="pile.h" />
-		<Unit filename="sprite.h" />
-		<Unit filename="weapon.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

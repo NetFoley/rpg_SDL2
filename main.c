@@ -1,6 +1,6 @@
 #include "SDL.h"
 #include "SDL_image.h"
-#include "layer.h"
+#include "include/scene.h"
 
 int main(int argc, char *argv[])
 {
@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     SDL_Renderer * renderer;
     SDL_Event event;
 
-    layer Layer1;
+    scene scene1;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
@@ -25,25 +25,31 @@ int main(int argc, char *argv[])
         return 3;
     }
 
-    char sMap[50];
-    strcpy(sMap, "map1.map");
-    layer_INI(&Layer1, renderer);
-    layer_AddWeapon(&Layer1, "Sword", melee, 10, 30, 30);
-    layer_AddWeapon(&Layer1, "Axe", melee, 15, 30, 30);
-    layer_readMap(&Layer1, sMap, renderer);
+    if(TTF_Init() == -1)
+    {
+        fprintf(stderr, "Erreur d'initialisation de TTF_Init : %s\n", TTF_GetError());
+        exit(EXIT_FAILURE);
+    }
+
+    char sMap[255];
+    strcpy(sMap, MAPPATH);
+    strcat(sMap, "stress2.map");
+    scene_INI(&scene1, renderer);
+    scene_readMap(&scene1, sMap);
 
 
     printf("Loading of map : %s\n", sMap);
-    printf("Creation of layer : \nid of player:%i\nNumber of characters: %i\nNumber of objects : %i\n", Layer1.idPlayer,Layer1.nbPerso, Layer1.nbObject);
+    printf("Creation of scene : \nid of player:%i\nNumber of characters: %i\nNumber of objects : %i\n", scene1.idPlayer,scene1.nbPerso, scene1.nbObject);
+    printf("\n");
 
     while (1) {
 
         while(SDL_PollEvent(&event))
         {
-            layer_getInput(&Layer1, event);
+            scene_getInput(&scene1, event);
         }
 
-        layer_getInput(&Layer1, event);
+        scene_getInput(&scene1, event);
         if (event.type == SDL_QUIT) {
             break;
         }
@@ -54,13 +60,12 @@ int main(int argc, char *argv[])
 
         SDL_SetRenderDrawColor(renderer, 0x10, 0x65, 0x25, 0x00);
         SDL_RenderClear(renderer);
-        layer_DRAW(&Layer1, renderer, window);
+        scene_DRAW(&scene1, renderer, window);
         SDL_RenderPresent(renderer);
     }
 
-    printf("\End of program\n");
-    printf("\nPlayer : \nLife : %i/%i \nx : %f\ny : %f\nNumber of characters: %i\nNumber of objects : %i\n", Layer1.player->gameObject.life, Layer1.player->gameObject.maxLife, Layer1.player->gameObject.X, Layer1.player->gameObject.Y, Layer1.nbPerso, Layer1.nbObject);
-    layer_Destroy(&Layer1);
+    printf("End of program\n");
+    printf("\nPlayer : \nLife : %i/%i \nx : %f\ny : %f\nNumber of characters: %i\nNumber of objects : %i\n", scene1.player->gameObject.life, scene1.player->gameObject.maxLife, scene1.player->gameObject.coord.x, scene1.player->gameObject.coord.y, scene1.nbPerso, scene1.nbObject);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 

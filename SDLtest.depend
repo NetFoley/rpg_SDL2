@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1588207281 source:d:\netfo\documents\ludus\c\sdltest\main.c
+1594756611 source:d:\netfo\documents\ludus\c\sdltest\main.c
 	"SDL.h"
 	"SDL_image.h"
-	"layer.h"
+	"include/scene.h"
 
 1564029277 d:\netfo\documents\ludus\sdl2-2.0.10\i686-w64-mingw32\include\sdl.h
 	"SDL_main.h"
@@ -357,7 +357,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1588332199 d:\netfo\documents\ludus\c\sdltest\perso.h
+1592774689 d:\netfo\documents\ludus\c\sdltest\perso.h
 	"sprite.h"
 	"gameObject.h"
 	"boxDrawer.h"
@@ -369,7 +369,7 @@
 	"SDL.h"
 	"SDL_image.h"
 
-1588207222 d:\netfo\documents\ludus\c\sdltest\layer.h
+1592508371 d:\netfo\documents\ludus\c\sdltest\layer.h
 	<stdio.h>
 	<math.h>
 	"perso.h"
@@ -758,5 +758,61 @@
 1587408162 d:\netfo\documents\ludus\c\sdltest\boxdrawer.h
 	"SDL.h"
 
-1588205847 d:\netfo\documents\ludus\c\sdltest\weapon.h
+1592491479 d:\netfo\documents\ludus\c\sdltest\weapon.h
+
+1594741526 source:d:\netfo\documents\ludus\c\sdltest\include\pile.c
+	<stdio.h>
+	<stdlib.h>
+	"pile.h"
+
+1594741527 d:\netfo\documents\ludus\c\sdltest\include\pile.h
+
+1594845222 d:\netfo\documents\ludus\c\sdltest\include\scene.h
+	<stdio.h>
+	<math.h>
+	"perso.h"
+	"interface.h"
+	"object.h"
+	"IA.h"
+	"weapon.h"
+	"caracterMatching.h"
+
+1594741067 d:\netfo\documents\ludus\c\sdltest\include\perso.h
+	"sprite.h"
+	"gameObject.h"
+	"boxDrawer.h"
+	"weapon.h"
+	"IA.h"
+	<math.h>
+
+1594501713 d:\netfo\documents\ludus\c\sdltest\include\sprite.h
+	<stdio.h>
+
+1594756679 d:\netfo\documents\ludus\c\sdltest\include\gameobject.h
+	<math.h>
+	"IA.h"
+
+1594741573 d:\netfo\documents\ludus\c\sdltest\include\ia.h
+	"pile.h"
+
+1594248134 d:\netfo\documents\ludus\c\sdltest\include\boxdrawer.h
+	"SDL.h"
+
+1593893327 d:\netfo\documents\ludus\c\sdltest\include\weapon.h
+
+1594741098 d:\netfo\documents\ludus\c\sdltest\include\object.h
+	"sprite.h"
+	"gameObject.h"
+
+1594232914 d:\netfo\documents\ludus\c\sdltest\include\caractermatching.h
+	<stdio.h>
+
+1547325890 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1594846087 d:\netfo\documents\ludus\c\sdltest\include\interface.h
+	"SDL_ttf.h"
+	"string.h"
 
