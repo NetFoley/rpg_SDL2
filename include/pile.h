@@ -1,10 +1,19 @@
 #ifndef PILE_H_INCLUDED
 #define PILE_H_INCLUDED
 
+#include <stdio.h>
+#include <stdlib.h>
+#include "math.h"
+
 typedef struct vect2D{
     int x;
     int y;
 }vect2D;
+
+typedef struct fvect2D{
+float x;
+float y;
+}fvect2D;
 
 typedef struct Element Element;
 struct Element
@@ -13,16 +22,25 @@ struct Element
     Element *suivant;
 };
 
-typedef struct File File;
-struct File
+typedef struct file file;
+struct file
 {
+    int taille;
     Element *premier;
 };
 
-File *initialiser();
-void enfiler(File *file, vect2D nvNombre);
-vect2D defiler(File *file);
-void afficherFile(File *file);
-void viderFile(File * file);
+file *initialiser();
+void enfiler(file *file, vect2D nvNombre);
+vect2D defiler(file *file);
+void afficherFile(file *file);
+void viderFile(file * file);
+fvect2D normalizefVect2D(fvect2D vect);
+fvect2D divfVect2D(fvect2D vect, float d);
+fvect2D addfVect2D(fvect2D vect, fvect2D vect2);
+float getDistfVect2D(fvect2D vect, fvect2D vect2);
+fvect2D multifVect(fvect2D vect, float x);
+float fDenormalize(float normalized, float min, float max);
+float fNormalize(float value, float min, float max);
+vect2D getLastNumber(file * path);
 
 #endif // PILE_H_INCLUDED

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1594756611 source:d:\netfo\documents\ludus\c\sdltest\main.c
+1597751826 source:d:\netfo\documents\ludus\c\sdltest\main.c
 	"SDL.h"
 	"SDL_image.h"
 	"include/scene.h"
@@ -760,14 +760,17 @@
 
 1592491479 d:\netfo\documents\ludus\c\sdltest\weapon.h
 
-1594741526 source:d:\netfo\documents\ludus\c\sdltest\include\pile.c
+1596388200 source:d:\netfo\documents\ludus\c\sdltest\include\pile.c
 	<stdio.h>
 	<stdlib.h>
 	"pile.h"
 
-1594741527 d:\netfo\documents\ludus\c\sdltest\include\pile.h
+1596386991 d:\netfo\documents\ludus\c\sdltest\include\pile.h
+	<stdio.h>
+	<stdlib.h>
+	"math.h"
 
-1594845222 d:\netfo\documents\ludus\c\sdltest\include\scene.h
+1597068254 d:\netfo\documents\ludus\c\sdltest\include\scene.h
 	<stdio.h>
 	<math.h>
 	"perso.h"
@@ -776,43 +779,120 @@
 	"IA.h"
 	"weapon.h"
 	"caracterMatching.h"
+	"ground.h"
 
-1594741067 d:\netfo\documents\ludus\c\sdltest\include\perso.h
+1597512111 d:\netfo\documents\ludus\c\sdltest\include\perso.h
+	<stdio.h>
+	<stdlib.h>
 	"sprite.h"
-	"gameObject.h"
+	"object.h"
 	"boxDrawer.h"
+	"string.h"
+	"pthread.h"
 	"weapon.h"
 	"IA.h"
 	<math.h>
 
-1594501713 d:\netfo\documents\ludus\c\sdltest\include\sprite.h
+1597686985 d:\netfo\documents\ludus\c\sdltest\include\sprite.h
 	<stdio.h>
+	<stdlib.h>
+	"SDL.h"
+	"SDL_image.h"
 
-1594756679 d:\netfo\documents\ludus\c\sdltest\include\gameobject.h
+1597088919 d:\netfo\documents\ludus\c\sdltest\include\gameobject.h
 	<math.h>
-	"IA.h"
-
-1594741573 d:\netfo\documents\ludus\c\sdltest\include\ia.h
+	<stdio.h>
+	<stdlib.h>
 	"pile.h"
-
-1594248134 d:\netfo\documents\ludus\c\sdltest\include\boxdrawer.h
 	"SDL.h"
 
-1593893327 d:\netfo\documents\ludus\c\sdltest\include\weapon.h
+1596570202 d:\netfo\documents\ludus\c\sdltest\include\ia.h
+	"pile.h"
+	<stdio.h>
+	<stdlib.h>
+	"object.h"
+	"tChar.h"
+	"pile.h"
 
-1594741098 d:\netfo\documents\ludus\c\sdltest\include\object.h
+1596318914 d:\netfo\documents\ludus\c\sdltest\include\boxdrawer.h
+	<stdio.h>
+	<stdlib.h>
+	"SDL.h"
+
+1596319154 d:\netfo\documents\ludus\c\sdltest\include\weapon.h
+	<stdio.h>
+	<stdlib.h>
+	"SDL.h"
+
+1596977095 d:\netfo\documents\ludus\c\sdltest\include\object.h
+	<stdio.h>
+	<stdlib.h>
 	"sprite.h"
 	"gameObject.h"
 
-1594232914 d:\netfo\documents\ludus\c\sdltest\include\caractermatching.h
+1596318914 d:\netfo\documents\ludus\c\sdltest\include\caractermatching.h
 	<stdio.h>
+	<stdlib.h>
 
 1547325890 d:\netfo\documents\ludus\c\sdltest\lib\sdl2-2.0.10\i686-w64-mingw32\include\sdl_ttf.h
 	"SDL.h"
 	"begin_code.h"
 	"close_code.h"
 
-1594846087 d:\netfo\documents\ludus\c\sdltest\include\interface.h
+1596318976 d:\netfo\documents\ludus\c\sdltest\include\interface.h
 	"SDL_ttf.h"
 	"string.h"
+	"perso.h"
+	<stdio.h>
+	<stdlib.h>
+
+1596319082 d:\netfo\documents\ludus\c\sdltest\include\tchar.h
+	<stdio.h>
+	<stdlib.h>
+	"pile.h"
+	"object.h"
+
+1596317939 source:d:\netfo\documents\ludus\c\sdltest\include\boxdrawer.c
+	<stdio.h>
+	<stdlib.h>
+	"boxDrawer.h"
+
+1596318050 source:d:\netfo\documents\ludus\c\sdltest\include\caractermatching.c
+	"caracterMatching.h"
+
+1596570395 source:d:\netfo\documents\ludus\c\sdltest\include\ia.c
+	"IA.h"
+
+1597751806 source:d:\netfo\documents\ludus\c\sdltest\include\perso.c
+	"perso.h"
+
+1597752253 source:d:\netfo\documents\ludus\c\sdltest\include\sprite.c
+	<stdio.h>
+	<stdlib.h>
+	"sprite.h"
+
+1596318359 source:d:\netfo\documents\ludus\c\sdltest\include\interface.c
+	"interface.h"
+
+1597089014 source:d:\netfo\documents\ludus\c\sdltest\include\gameobject.c
+	"gameObject.h"
+
+1597060312 source:d:\netfo\documents\ludus\c\sdltest\include\object.c
+	"object.h"
+
+1596318561 source:d:\netfo\documents\ludus\c\sdltest\include\weapon.c
+	"weapon.h"
+
+1596318594 source:d:\netfo\documents\ludus\c\sdltest\include\tchar.c
+	"tChar.h"
+
+1597682750 source:d:\netfo\documents\ludus\c\sdltest\include\scene.c
+	"scene.h"
+
+1597086592 source:d:\netfo\documents\ludus\c\sdltest\include\ground.c
+	"ground.h"
+
+1597086505 d:\netfo\documents\ludus\c\sdltest\include\ground.h
+	"gameObject.h"
+	"sprite.h"
 

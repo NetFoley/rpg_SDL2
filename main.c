@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
     scene_INI(&scene1, renderer);
     scene_readMap(&scene1, sMap);
 
-
     printf("Loading of map : %s\n", sMap);
     printf("Creation of scene : \nid of player:%i\nNumber of characters: %i\nNumber of objects : %i\n", scene1.idPlayer,scene1.nbPerso, scene1.nbObject);
     printf("\n");
@@ -65,7 +64,7 @@ int main(int argc, char *argv[])
     }
 
     printf("End of program\n");
-    printf("\nPlayer : \nLife : %i/%i \nx : %f\ny : %f\nNumber of characters: %i\nNumber of objects : %i\n", scene1.player->gameObject.life, scene1.player->gameObject.maxLife, scene1.player->gameObject.coord.x, scene1.player->gameObject.coord.y, scene1.nbPerso, scene1.nbObject);
+    printf("\nPlayer : \nLife : %.1f/%.1f \nx : %.1f\ny : %.1f\nNumber of characters: %i\nNumber of objects : %i\n", scene1.player->gameObject.life, scene1.player->gameObject.maxLife, scene1.player->gameObject.coord.x, scene1.player->gameObject.coord.y, scene1.nbPerso, scene1.nbObject);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 

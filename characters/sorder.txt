@@ -1,0 +1,7 @@
+_Idle
+_Walk
+_Attack
+_Block
+_Hit
+_Farm
+_Dead
